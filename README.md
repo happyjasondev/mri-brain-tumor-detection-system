@@ -1,1 +1,1 @@
-# mri-tumor-brain-tumor-detection-system
+# mri-brain-tumor-detection-system
