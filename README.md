@@ -1,5 +1,7 @@
 # MRI Brain Tumor Detection System
 A program that finds tumors in MRI brain images, coded in Python.
+The results may be false positives, due to its reliance on simple threshold-based segmentation and simply looking at brightness levels. 
+Real-world imaging technology may use deep learning models trained on vast amounts of annotated data based on shape, location, and texture.
 
 ## 🛠️ Features & Tech Stack
 **Language:**
@@ -13,11 +15,17 @@ A program that finds tumors in MRI brain images, coded in Python.
 - From mri_pipeline: denoise_image, enhance_contrast, estimate_noise_sigma
 
 **Key Features:** 
-1. Regular threshold segmentation	mri_pipeline.py
-2. Apply to real images	real_mri_pipeline.py
-3. Pixel-level supervised learning (Random Forest)	random_forest_segmentation.py, Dice ≈ 0.49
-4. Deep Learning (U-Net)	unet_reference.py	⚠️ The architecture is complete, but it lacks PyTorch and a GPU.
+This script directly reuses the four functional steps defined in `mri_pipeline.py`:
+- denoise_image()      -- Denoising
+- enhance_contrast()   -- Contrast enhancement
+- segment_lesion()     -- Segmentation / Annotation of abnormally bright regions
+- visualize_pipeline() -- Visualization of output
 
 ## 📖 How to View the Sample Image
 1. Type this into a terminal or command prompt: `git clone https://github.com/happyjasondev/mri-brain-tumor-detection-system.git`
 2. Open `index.html` in any modern web browser.
+
+**Disclaimer:**
+The "automatic annotation" here is purely a demonstration of image processing techniques
+(identifying regions with abnormally high signal intensity) and does not constitute a medical diagnosis.
+Actual clinical interpretation must still be performed by a professional radiologist.
