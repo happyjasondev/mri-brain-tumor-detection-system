@@ -3,6 +3,9 @@ A practice program that finds tumors in MRI brain images, coded in Python.
 The results may be false positives, due to its reliance on simple threshold-based segmentation and simply looking at brightness levels. 
 Real-world imaging technology may use deep learning models trained on vast amounts of annotated data based on shape, location, and texture.
 
+## 📖 How to View the Sample Image
+In a browser, copy and paste this URL on the search bar: `https://mri-brain-tumor-detection-system.netlify.app/`
+
 ## 🛠️ Features & Tech Stack
 **Language:**
 - Python
@@ -20,10 +23,6 @@ This script directly reuses the four functional steps defined in `mri_pipeline.p
 - enhance_contrast()   -- Contrast enhancement
 - segment_lesion()     -- Segmentation / Annotation of abnormally bright regions
 - visualize_pipeline() -- Visualization of output
-
-## 📖 How to View the Sample Image
-1. Type this into a terminal or command prompt: `git clone https://github.com/happyjasondev/mri-brain-tumor-detection-system.git`
-2. Open `index.html` in any modern web browser.
 
 **Disclaimer:**
 The "automatic annotation" here is purely a demonstration of image processing techniques
