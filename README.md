@@ -1,5 +1,5 @@
 # MRI Brain Tumor Detection System
-A program that finds tumors in MRI brain images, coded in Python.
+A practice program that finds tumors in MRI brain images, coded in Python.
 The results may be false positives, due to its reliance on simple threshold-based segmentation and simply looking at brightness levels. 
 Real-world imaging technology may use deep learning models trained on vast amounts of annotated data based on shape, location, and texture.
 
@@ -28,4 +28,4 @@ This script directly reuses the four functional steps defined in `mri_pipeline.p
 **Disclaimer:**
 The "automatic annotation" here is purely a demonstration of image processing techniques
 (identifying regions with abnormally high signal intensity) and does not constitute a medical diagnosis.
-Actual clinical interpretation must still be performed by a professional radiologist.
+Actual clinical interpretation must still be performed by a professional physician.
