@@ -4,7 +4,7 @@ The results may be false positives, due to its reliance on simple threshold-base
 Real-world imaging technology may use deep learning models trained on vast amounts of annotated data based on shape, location, and texture.
 
 ## 📖 How to View the Sample Image
-In a browser, copy and paste this URL on the search bar: `https://mri-brain-tumor-detection-system.netlify.app/`
+In a browser, copy and paste this URL on the search bar: `https://happyjasondev.github.io/mri-brain-tumor-detection-system/`
 
 ## 🛠️ Features & Tech Stack
 **Language:**
