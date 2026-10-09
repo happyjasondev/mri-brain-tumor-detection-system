@@ -1,20 +1,21 @@
 """
-套用「MRI 影像清洗 / 增強 / 標註」流程到真實上傳的影像
-======================================================
-這支程式直接重用 mri_pipeline.py 裡面已經寫好的四個步驟函式：
-    denoise_image()      -- 降噪
-    enhance_contrast()   -- 對比度增強
-    segment_lesion()     -- 分割 / 標註異常明亮區域
-    visualize_pipeline() -- 視覺化輸出
+Applying the "MRI Image Cleaning / Enhancement / Annotation" Pipeline to Real Uploaded Images
+==========================================================================================
+This script directly reuses the four functional steps defined in `mri_pipeline.py`:
+denoise_image()      -- Denoising
+enhance_contrast()   -- Contrast enhancement
+segment_lesion()     -- Segmentation / Annotation of abnormally bright regions
+visualize_pipeline() -- Visualization of output
 
-只有「讀取影像」這一步不一樣：這裡改成讀取使用者上傳的真實 JPG 影像，
-而不是用合成的 Shepp-Logan phantom。這正好示範了：
-只要把讀進來的 numpy array 格式對了 (單通道、數值介於 0~1 之間)，
-後面整套 pipeline 完全不需要更動就能套用在真實醫學影像上。
+Only the "image loading" step differs: here, we load a real JPG image uploaded by the user
+instead of using a synthetic Shepp-Logan phantom. This demonstrates that
+as long as the input NumPy array is formatted correctly (single channel, values ​​between 0 and 1),
+the entire subsequent pipeline can be applied to real medical images without any modifications.
 
-【免責聲明】
-這裡的「自動標註」純粹是影像處理技術演示（找出訊號異常明亮的區域），
-不構成醫療診斷。真實臨床判讀仍需由專業放射科醫師執行。
+[Disclaimer]
+The "automatic annotation" here is purely a demonstration of image processing techniques
+(identifying regions with abnormally high signal intensity) and does not constitute a medical diagnosis.
+Actual clinical interpretation must still be performed by a professional radiologist.
 """
 
 import sys
@@ -30,36 +31,42 @@ from mri_pipeline import denoise_image, enhance_contrast, estimate_noise_sigma
 
 
 # ---------------------------------------------------------------
-# 步驟 1：讀取真實上傳的影像
+# Step 1: Load the real uploaded image
 # ---------------------------------------------------------------
 def load_real_mri(path):
     """
-    讀取真實 MRI 影像（JPG/PNG 等一般圖檔格式）。
-    真實 MRI 若是 JPG/PNG 格式，通常已經被壓縮成 8-bit 灰階圖，
-    這裡簡單轉成灰階 + 正規化到 0~1 之間，就可以直接接上原本的 pipeline。
-
-    若未來要處理正規的醫學影像格式：
-        - DICOM (.dcm)      -> 用 pydicom 讀取
-        - NIfTI (.nii/.gz)  -> 用 nibabel 讀取
+    Load a real MRI image (standard formats like JPG/PNG).
+    Real MRI images in JPG/PNG formats have typically already been compressed into 8-bit grayscale images; 
+    here, we simply convert the image to grayscale and normalize the values ​​to the 0–1 range,
+    allowing it to be fed directly into the existing pipeline. 
+    
+    If handling standard medical imaging formats in the future:
+    - DICOM (.dcm)      -> Read using pydicom
+    - NIfTI (.nii/.gz)  -> Read using nibabel
     """
-    img = Image.open(path).convert("L")  # 轉灰階
+    img = Image.open(path).convert("L") # Convert to grayscale
     arr = img_as_float(np.array(img))
     return arr
 
 
 # ---------------------------------------------------------------
-# 針對真實影像微調過的分割函式
+# Segmentation function fine-tuned for real images
 # ---------------------------------------------------------------
 def segment_bright_region(img, skull_erosion=6, min_size=120):
     """
-    與 mri_pipeline.segment_lesion() 邏輯相同，
-    但侵蝕像素數 (skull_erosion) 依真實影像尺寸重新調整過，
-    因為這張影像解析度比之前的合成示範影像小很多。
-
-    【重要】這裡刻意傳入「降噪後、但尚未做 CLAHE 局部對比增強」的影像來做閾值分割。
-    CLAHE 是局部正規化，會讓每一小塊區域的對比都被拉開，
-    導致正常的大腦皮質迴紋 (gyri) 在局部也會顯得「偏亮」，反而干擾全域亮度判斷。
-    分割用全域亮度資訊比較準確，增強後的影像則保留給視覺化顯示使用。
+    The logic is identical to mri_pipeline.segment_lesion(),
+    but the skull erosion pixel count (skull_erosion) has been readjusted
+    based on the actual image dimensions, as this image has a much lower
+    resolution than the previous synthetic demonstration images. 
+    
+    [Important] Here, we intentionally pass an image that has undergone
+    noise reduction but *not* CLAHE (local contrast enhancement) for
+    threshold-based segmentation. CLAHE performs local normalization,
+    stretching the contrast in every small region; this causes normal
+    cerebral gyri to appear "brighter" locally, which interferes with
+    global brightness assessment. Global brightness information yields
+    more accurate segmentation, while the enhanced image is reserved
+    for visualization purposes.
     """
     head_mask = img > filters.threshold_otsu(img)
     head_mask = ndi.binary_fill_holes(head_mask)
@@ -107,7 +114,7 @@ def visualize_real_mri(raw, denoised, enhanced, mask, regions, save_path):
     for ax in axes:
         ax.axis("off")
 
-    # 免責聲明：純文字、放大字體，置於圖片最下方
+    # Disclaimer: plain text, enlarged
     plt.tight_layout(rect=[0, 0.3, 1, 1])
     fig.text(
         0.5, 0.21,
@@ -123,7 +130,7 @@ def visualize_real_mri(raw, denoised, enhanced, mask, regions, save_path):
     )
     plt.savefig(save_path, dpi=150, bbox_inches="tight", facecolor="white")
     plt.close(fig)
-    print(f"結果影像已儲存至: {save_path}")
+    print(f"The result image has been saved to: {save_path}")
 
 
 if __name__ == "__main__":
@@ -137,10 +144,10 @@ if __name__ == "__main__":
         "/mnt/user-data/outputs/real_mri_result.png",
     )
 
-    print(f"\n共標註出 {len(regions)} 個異常明亮區域：")
+    print(f"\nDetected a total of {len(regions)} abnormally bright regions:")
     for i, r in enumerate(regions, 1):
         cy, cx = r.centroid
         print(
-            f"  區域 {i}: 中心座標=({cy:.1f}, {cx:.1f}), "
-            f"面積={r.area:.0f} px, 平均亮度={r.intensity_mean:.3f}"
+            f"  Region {i}: Center coordinates=({cy:.1f}, {cx:.1f}), "
+            f"  Area={r.area:.0f} px, Mean intensity={r.intensity_mean:.3f}"
         )
