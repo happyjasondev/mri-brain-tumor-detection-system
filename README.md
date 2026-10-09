@@ -1,5 +1,5 @@
 # MRI Brain Tumor Detection System
-A  coded in Python.
+A program that finds tumors in MRI brain images, coded in Python.
 
 ## 🛠️ Features & Tech Stack
 **Language:**
